@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8"> <title>Hacoli Premium DevOps Dashboard</title>
+    <meta charset="UTF-8"> <!-- Türkçe karakter sente ayarı -->
+    <title>Hacoli Cyber DevOps Dashboard v2</title>
     <style>
         /* ==========================================
            1. DEĞİŞKENLER VE TEMEL ŞASİ (Light Mode)
@@ -20,9 +21,12 @@
             --freebsd-red: #D54016;
             --linux-red: #E22B22;
             --dark-charcoal: #1A1A1A;
+            
+            /* SİBER NOKTA DESENİ */
+            --grid-pattern: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
         }
 
-        /* 🚨 GECE MODU AKTİFKEN DEVREYE GİRECEK CİVATALAR */
+        /* GECE MODU AKTİFKEN DEVREYE GİRECEK CİVATALAR */
         body.dark-mode {
             --bg-color: #0F0F12;
             --container-bg: #16161A;
@@ -33,6 +37,7 @@
             --row-hover: #25252E;
             --shadow-color: rgba(0, 0, 0, 0.5);
             --card-bg: #1F1F26;
+            --grid-pattern: radial-gradient(rgba(213, 64, 22, 0.07) 1px, transparent 1px);
         }
 
         html, body {
@@ -41,15 +46,17 @@
             width: 100%;
             height: 100%;
             background-color: var(--bg-color);
+            background-image: var(--grid-pattern);
+            background-size: 20px 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s ease, background-image 0.3s ease;
         }
 
         /* ==========================================
-           2. ANA CONTAINER VE ŞALTER PANELİ
+           2. ANA CONTAINER VE KONTROL PANELİ
            ========================================== */
         .hacoli-container {
             background-color: var(--container-bg);
@@ -62,7 +69,6 @@
             transition: all 0.3s ease;
         }
 
-        /* Sağ Üst Kontrol İstasyonu */
         .kontrol-paneli {
             position: absolute;
             top: 20px;
@@ -72,7 +78,6 @@
             gap: 15px;
         }
 
-        /* 🌙 Gece Modu Butonu */
         .dark-mode-btn {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -89,7 +94,6 @@
             transform: scale(1.05);
         }
 
-        /* 🟢 Canlı Sistem Lambası (Pulse Efektli) */
         .status-badge {
             display: flex;
             align-items: center;
@@ -117,7 +121,7 @@
         }
 
         /* ==========================================
-           3. LOGO VE SAYAÇ KARTLARI (Kubernetes)
+           3. LOGO, SAYAÇLAR VE HARARET (Progress Bar)
            ========================================== */
         .logo-alani {
             display: flex;
@@ -135,11 +139,11 @@
         /* Kubernetes Sayaç Panosu */
         .k8s-counter-grid {
             display: grid;
-            grid-template-columns: 14fr 1fr; /* Flex yerine yan yana iki oda */
+            grid-template-columns: 1fr;
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
-        @media (min-width: 500px) {
+        @media (min-width: 600px) {
             .k8s-counter-grid { grid-template-columns: 1fr 1fr; }
         }
         .counter-card {
@@ -152,16 +156,77 @@
             gap: 12px;
             transition: all 0.2s ease;
         }
-        .counter-card:hover {
-            border-color: var(--freebsd-red);
-        }
+        .counter-card:hover { border-color: var(--freebsd-red); }
         .counter-icon { font-size: 22px; }
         .counter-info h4 { margin: 0; font-size: 11px; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px; }
         .counter-info p { margin: 2px 0 0 0; font-size: 15px; font-weight: bold; color: var(--text-main); }
 
+        /* 📊 ANLIK HARARET PANOSU (Progress Bar CSS) */
+        .hararet-panosu {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+        .hararet-panosu h3 {
+            margin: 0 0 15px 0;
+            font-size: 13px;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .bar-container {
+            margin-bottom: 12px;
+        }
+        .bar-container:last-child { margin-bottom: 0; }
+        .bar-etiket {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 6px;
+        }
+        .progress-rayi {
+            background-color: var(--border-color);
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            position: relative;
+        }
+        .progress-ibre {
+            height: 100%;
+            background: linear-gradient(90deg, var(--freebsd-red), #e67e22);
+            border-radius: 5px;
+            width: 0; /* JS ile dolduracağız */
+            transition: width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
+        }
+
         /* ==========================================
-           4. PREMIUM HOVER TABLO SİSTEMİ
+           4. ARAMA MOTORU VE PREMIUM HOVER TABLO
            ========================================== */
+        .arama-kutusu {
+            width: 100%;
+            padding: 12px 16px;
+            box-sizing: border-box;
+            border: 1px solid var(--border-color);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .arama-kutusu:focus {
+            border-color: var(--freebsd-red);
+            box-shadow: 0 0 0 3px rgba(213, 64, 22, 0.15);
+        }
+
         .freebsd-table {
             width: 100%;
             border-collapse: collapse;
@@ -184,48 +249,47 @@
             position: relative;
             transition: all 0.2s ease;
         }
-        .freebsd-table tr:nth-child(even) td {
-            background-color: var(--row-even);
-        }
+        .freebsd-table tr:nth-child(even) td { background-color: var(--row-even); }
 
-        /* 🚨 PREMIUM HOVER: Satır Şahlanma Efekti */
-        .freebsd-table tbody tr {
-            transition: all 0.2s ease;
-        }
+        .freebsd-table tbody tr { transition: all 0.2s ease; }
         .freebsd-table tbody tr:hover td {
             background-color: var(--row-hover);
-            transform: translateX(6px); /* Yazıları hafif sağa esnetir */
-            color: var(--text-main);
+            transform: translateX(6px);
         }
-        /* Satırın solundan çıkan kırmızı çelik gizli takoz */
         .freebsd-table tbody tr td:first-child::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 0;
-            background-color: var(--freebsd-red);
-            transition: width 0.2s ease;
+            content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 0;
+            background-color: var(--freebsd-red); transition: width 0.2s ease;
         }
-        .freebsd-table tbody tr:hover td:first-child::before {
-            width: 4px; /* Fare gelince 4px kırmızı şerit belirir */
-        }
+        .freebsd-table tbody tr:hover td:first-child::before { width: 4px; }
 
-        /* Metin Renkleri ve Linkler */
         .linux-text { color: var(--linux-red); font-weight: bold; }
         .freebsd-text { color: var(--freebsd-red); font-weight: bold; }
         
         .freebsd-table a {
+            color: var(--freebsd-red); text-decoration: none; font-weight: 600;
+            border-bottom: 1px dashed var(--freebsd-red); transition: all 0.2s ease;
+        }
+        .freebsd-table a:hover { color: var(--text-main); border-bottom: 1px solid var(--text-main); }
+
+        /* YAML İndirme Butonu CSS'i */
+        .yaml-btn {
+            background-color: transparent;
+            border: 1px dashed var(--freebsd-red);
             color: var(--freebsd-red);
-            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
             font-weight: 600;
-            border-bottom: 1px dashed var(--freebsd-red);
+            margin-top: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
             transition: all 0.2s ease;
         }
-        .freebsd-table a:hover {
-            color: var(--text-main);
-            border-bottom: 1px solid var(--text-main);
+        .yaml-btn:hover {
+            background-color: var(--freebsd-red);
+            color: #FFFFFF;
+            border-style: solid;
         }
     </style>
 </head>
@@ -233,6 +297,7 @@
 
     <div class="hacoli-container">
         
+        <!-- Üst Kontrol İstasyonu -->
         <div class="kontrol-paneli">
             <div class="status-badge">
                 <div class="pulse-dot"></div>
@@ -241,10 +306,12 @@
             <button class="dark-mode-btn" id="toggleModeBtn">🌙 Gece Modu</button>
         </div>
         
+        <!-- Logo Alanı -->
         <div class="logo-alani">
             <img src="freeBSD.png" alt="FreeBSD Logo">
         </div>
 
+        <!-- Kubernetes Canlı Sayaç Kartları -->
         <div class="k8s-counter-grid">
             <div class="counter-card">
                 <div class="counter-icon">⚙️</div>
@@ -262,7 +329,38 @@
             </div>
         </div>
 
-        <table class="freebsd-table">
+        <!-- 📊 ANLIK HARARET PANOSU (Progress Bar Odası) -->
+        <div class="hararet-panosu">
+            <h3>🔥 Sunucu Anlık Hararet Durumu</h3>
+            
+            <!-- CPU Bar -->
+            <div class="bar-container">
+                <div class="bar-etiket">
+                    <span>CPU Yükü (Core)</span>
+                    <span id="cpu-yuzde">0%</span>
+                </div>
+                <div class="progress-rayi">
+                    <div class="progress-ibre" id="cpu-bar"></div>
+                </div>
+            </div>
+
+            <!-- RAM Bar -->
+            <div class="bar-container">
+                <div class="bar-etiket">
+                    <span>RAM Bellek Tüketimi</span>
+                    <span id="ram-yuzde">0%</span>
+                </div>
+                <div class="progress-rayi">
+                    <div class="progress-ibre" id="ram-bar"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Canlı Arama Kutusu -->
+        <input type="text" id="tabloArama" class="arama-kutusu" placeholder="🔍 Tabloda işletim sistemi ara (Örn: Linux, FreeBSD)...">
+
+        <!-- Premium Tablo -->
+        <table class="freebsd-table" id="isletimTablosu">
             <thead>
                 <tr>
                     <th>İşletim Sistemi</th>
@@ -281,9 +379,11 @@
                     <td>FreeBSD Güçlü Dağıtım ve Core Sistem Kapısı</td>
                     <td><a href="https://www.freebsd.org" target="_blank">freebsd.org</a></td>
                 </tr>
-                <tr>
-                    <td colspan="3" style="text-align: center; border-bottom: none; font-weight: bold; color: var(--freebsd-red); padding: 18px 16px;">
-                        ⚙️ Hacoli DevOps Altyapısı K3s Üzerinde Kararlılıkla Çalışıyor
+                <!-- Son Özel Satır (YAML İndirme Butonlu) -->
+                <tr id="ozelSatir">
+                    <td colspan="3" style="text-align: center; border-bottom: none; font-weight: bold; padding: 18px 16px;">
+                        <div style="color: var(--freebsd-red); margin-bottom: 8px;">⚙️ Hacoli Altyapısı K3s Üzerinde Kararlılıkla Çalışıyor</div>
+                        <button class="yaml-btn" id="indirYamlBtn">📥 Altyapı YAML Raporunu İndir</button>
                     </td>
                 </tr>
             </tbody>
@@ -291,19 +391,102 @@
 
     </div>
 
+    <!-- JAVASCRIPT MOTORU -->
     <script>
+        // 1. Gece/Gündüz Modu Şalteri
         const btn = document.getElementById('toggleModeBtn');
-        
         btn.addEventListener('click', () => {
-            // Body'ye dark-mode sınıfını ekle/çıkar yapıyoruz
             document.body.classList.toggle('dark-mode');
-            
-            // Butonun üstündeki yazıyı duruma göre güncelliyoruz
-            if (document.body.classList.contains('dark-mode')) {
-                btn.innerHTML = '☀️ Gündüz Modu';
-            } else {
-                btn.innerHTML = '🌙 Gece Modu';
+            btn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️ Gündüz Modu' : '🌙 Gece Modu';
+        });
+
+        // 2. 📊 HARARET GÖSTERGESİ ANİMASYON MOTORU
+        window.addEventListener('DOMContentLoaded', () => {
+            // Sunucu anlık hararet değerleri (Sanayi ortalaması)
+            const cpuHedef = 42; 
+            const ramHedef = 68; 
+
+            // CPU İbresini İtliyoruz
+            setTimeout(() => {
+                document.getElementById('cpu-bar').style.width = cpuHedef + '%';
+                document.getElementById('cpu-yuzde').innerHTML = cpuHedef + '%';
+            }, 300);
+
+            // RAM İbresini İtliyoruz
+            setTimeout(() => {
+                document.getElementById('ram-bar').style.width = ramHedef + '%';
+                document.getElementById('ram-yuzde').innerHTML = ramHedef + '%';
+            }, 600);
+        });
+
+        // 3. Canlı Arama ve Filtreleme Motoru
+        const aramaGirdisi = document.getElementById('tabloArama');
+        aramaGirdisi.addEventListener('keyup', () => {
+            const filtre = aramaGirdisi.value.toUpperCase();
+            const tablo = document.getElementById('isletimTablosu');
+            const satirlar = tablo.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
+
+            for (let i = 0; i < satirlar.length; i++) {
+                // En alttaki özel buton satırını filtrenin dışında tutuyoruz
+                if (satirlar[i].id === 'ozelSatir') continue;
+
+                const td = satirlar[i].getElementsByTagName('td')[0];
+                if (td) {
+                    const metinDegeri = td.textContent || td.innerText;
+                    if (metinDegeri.toUpperCase().indexOf(filtre) > -1) {
+                        satirlar[i].style.display = "";
+                    } else {
+                        satirlar[i].style.display = "none";
+                    }
+                }
             }
+        });
+
+        // 4. Tek Tıkla YAML Raporu İndirme Fonksiyonu
+        document.getElementById('indirYamlBtn').addEventListener('click', () => {
+            const yamlIcerik = `apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: hacoli-web
+            spec:
+              replicas: 2 # Tek sunucuda bile olsak 2 yedekli çalışsın, biri çökerse öbürü kurtarsın
+              selector:
+                matchLabels:
+                  app: web
+              template:
+                metadata:
+                  labels:
+                    app: web
+                spec:
+                  containers:
+                  - name: nginx
+                    image: hacoli-yerel:v5
+                    ports:
+                    - containerPort: 80
+                    imagePullPolicy: Never
+            ---
+            apiVersion: v1
+            kind: Service
+            metadata:
+              name: hacoli-web-servis
+            spec:
+              type: NodePort
+              selector:
+                app: web
+              ports:
+                - port: 80
+                  targetPort: 80
+                  nodePort: 30080 # 🏎️ VPS'inin dışarı açılan kapısı (Portu)`;
+
+            const blob = new Blob([yamlIcerik], { type: 'text/yaml' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'hacoli-k3s-config.yaml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
     </script>
 
