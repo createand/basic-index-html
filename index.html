@@ -1,126 +1,122 @@
-<html>
+<!DOCTYPE html>
+<html lang="tr">
 <head>
-<meta charset="UTF-8">
-<title>index.html</title>
-<style>
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-    }
-    .ortala-kutu {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        width: 100%;         /* 🚨 vw yerine %100 yaptık, taşmayı önledik */
-        height: 100vh;
-        background-color: white;
-    }
-    .ortala-kutu img {
-        max-width: 100%;
-        height: auto;
-    }
-   /* Tablo Şasisi */
-   .freebsd-table {
-    width: 50%;
-    border-collapse: collapse;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px 0;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 6px;
-    overflow: hidden;
-    margin-top: -400px;
-}
+    <meta charset="UTF-8"> <title>Hacoli FreeBSD Container Tasarımı</title>
+    <style>
+        /* 1. SAYFA GENEL AYARLARI (Scroll barları kör etme ve ortalama) */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f4f5f7; /* Arkadaki hafif sanayi grisi */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-/* Başlık Takımı (Antrasit Göz) */
-.freebsd-table th {
-    background-color: #1A1A1A; /* Koyu FreeBSD şasisi */
-    color: #FFFFFF;
-    text-align: left;
-    padding: 14px 16px;
-    font-size: 15px;
-    letter-spacing: 0.5px;
-    border-bottom: 3px solid #D54016; /* Alt fitil Daemon Kırmızısı */
-}
+        /* 2. ANA CONTAINER (Logo ve Tabloyu Kapsayan Çelik Zırh) */
+        .general-container {
+            background-color: #FFFFFF; /* Kutunun içi saf beyaz */
+            width: 100%;
+            max-width: 850px;         /* Kutunun ekrandaki ideal genişlik sınırı */
+            padding: 30px;            /* İçerideki elemanlar kenara yapışmasın diye boşluk */
+            border-radius: 12px;      /* Köşeleri nizamî yuvarlama cıvatası */
+            
+            /* 🚨 İŞTE İSTEDİĞİN GÖLGE AYARI BURASI! */
+            /* Mantık: sağa-gölge aşağı-gölge yayılma-miktarı büyüme-miktarı RGBA(R, G, B, Opaklık) */
+            box-shadow: 0 10px 30px 0 rgba(213, 64, 22, 0.15); 
+            
+            /* Üstteki gölgede FreeBSD'nin kor kırmızısını (213, 64, 22) %15 opaklıkla verdik.
+               Eğer düz koyu gri bir gölge istersen şunu açabilirsin:
+               box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.1); */
+               
+            transition: all 0.3s ease; /* Fareyle üstüne gelince gölge oynasın diye amortisör */
+        }
 
-/* Satır ve Hücre Ayarları */
-.freebsd-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid #E0E0E0;
-    color: #333333;
-    font-size: 14px;
-}
+        /* Fareyle kutunun üstüne gelince (Hover) gölgeyi daha da canlandırma cıvatası */
+        .general-container:hover {
+            box-shadow: 0 15px 40px 0 rgba(213, 64, 22, 0.25);
+            transform: translateY(-2px); /* Kutuyu hafif yukarı kaldırır */
+        }
 
-/* Çırakların Gözü Dönmesin Diye Satır Geçiş Rengi */
-.freebsd-table tr:nth-child(even) {
-    background-color: #FAFAFA;
-}
+        /* 3. LOGO (PNG) AYARLARI */
+        .logo-alani {
+            display: flex;
+            justify-content: center;   /* Logoyu kendi alanı içinde ortala */
+            margin-bottom: 25px;       /* Alttaki tabloya çok yanaşmasın diye mesafe */
+        }
+        .logo-alani img {
+            max-width: 100%;          /* Logonun devasa olmasını önleyen takoz */
+            height: auto;
+        }
 
-/* Fareyle Üstüne Gelince Satırın Yanması (Hover) */
-.freebsd-table tr:hover {
-    background-color: #F1F1F1;
-}
-
-/* İşletim Sistemi İsim Renkleri */
-.linux-text {
-    color: #E22B22;
-    font-weight: bold;
-}
-.freebsd-text {
-    color: #D54016;
-    font-weight: bold;
-}
-
-/* Link Cıvataları */
-.freebsd-table a {
-    color: #D54016;
-    text-decoration: none;
-    font-weight: 600;
-    border-bottom: 1px dashed #D54016;
-    transition: all 0.2s ease;
-}
-.freebsd-table a:hover {
-    color: #1A1A1A;
-    border-bottom: 1px solid #1A1A1A;
-}
-.tablo-merkez-kutusu {
-    display: flex;
-    justify-content: center;  /* Yatayda tam ortala */
-    align-items: center;      /* Dikeyde tam ortala */
-    margin-top: -700px;
-    width: 100%;
-    height: 100vh;            /* Ekran yüksekliğini sıfıra sıfır eşitle */
-    background-color: white; /* Arkaya hafif sanayi grisi, tablo parlasın */
-}
-</style>
+        /* 4. ASİL FREEBSD TABLO CSS'LERİ */
+        .freebsd-table {
+            width: 100%;
+            border-collapse: collapse;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .freebsd-table th {
+            background-color: #1A1A1A;
+            color: #FFFFFF;
+            text-align: left;
+            padding: 14px 16px;
+            font-size: 15px;
+            border-bottom: 3px solid #D54016;
+        }
+        .freebsd-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid #E0E0E0;
+            color: #333333;
+            font-size: 14px;
+        }
+        .freebsd-table tr:nth-child(even) {
+            background-color: #FAFAFA;
+        }
+        .linux-text { color: #E22B22; font-weight: bold; }
+        .freebsd-text { color: #D54016; font-weight: bold; }
+        .freebsd-table a {
+            color: #D54016;
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px dashed #D54016;
+        }
+    </style>
 </head>
 <body>
-    <div class="ortala-kutu">
-        <img src="freeBSD.png" alt="FreeBSD Image">
-    </div>
-    <div class="tablo-merkez-kutusu">
+
+    <div class="general-container">
+        
+        <div class="logo-alani">
+            <img src="freeBSD.png" alt="FreeBSD Logo">
+        </div>
+
         <table class="freebsd-table">
-        <thead>
-            <tr>
-                <th>İşletim Sistemi</th>
-                <th>Resmi Distribütör / Topluluk Kapısı</th>
-                <th>Ana Bağlantı Linki</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td><span class="linux-text">🐧 Linux</span></td>
-                <td>Linux Çirkin Dağıtım ve Kernel Deposu</td>
-                <td><a href="https://www.kernel.org" target="_blank">kernel.org</a></td>
-            </tr>
-            <tr>
-                <td><span class="freebsd-text">😈 FreeBSD</span></td>
-                <td>FreeBSD Güçlü Dağıtım ve Core Sistem Kapısı</td>
-                <td><a href="https://www.freebsd.org" target="_blank">freebsd.org</a></td>
-            </tr>
-        </tbody>
-    </table>
+            <thead>
+                <tr>
+                    <th>İşletim Sistemi</th>
+                    <th>Resmi Distribütör / Topluluk Kapısı</th>
+                    <th>Ana Bağlantı Linki</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="linux-text">🐧 Linux</span></td>
+                    <td>Linux Çirkin Dağıtım ve Kernel Deposu</td>
+                    <td><a href="https://www.kernel.org" target="_blank">kernel.org</a></td>
+                </tr>
+                <tr>
+                    <td><span class="freebsd-text">😈 FreeBSD</span></td>
+                    <td>FreeBSD Güçlü Dağıtım ve Core Sistem Kapısı</td>
+                    <td><a href="https://www.freebsd.org" target="_blank">freebsd.org</a></td>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
+
 </body>
 </html>
