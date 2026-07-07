@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8"> <!-- Türkçe karakter sente ayarı -->
-    <title>Hacoli Cyber DevOps Dashboard v3</title>
+    <meta charset="UTF-8"> <title>Hacoli Cyber DevOps Dashboard v4</title>
     <style>
         /* ==========================================
            1. DEĞİŞKENLER VE TEMEL ŞASİ (Light Mode)
@@ -59,6 +58,7 @@
             align-items: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             transition: background-color 0.3s ease, background-image 0.3s ease;
+            overflow: hidden;
         }
 
         /* ==========================================
@@ -173,17 +173,11 @@
             padding: 18px;
             margin-bottom: 25px;
         }
-        .hararet-panosu h3 {
-            margin: 0 0 15px 0;
-            font-size: 13px;
-            text-transform: uppercase;
-            color: var(--text-sub);
-            letter-spacing: 0.5px;
-        }
+        .hararet-panosu h3 { margin: 0 0 15px 0; font-size: 13px; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px; }
         .bar-container { margin-bottom: 12px; }
         .bar-etiket { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
         .progress-rayi { background-color: var(--border-color); height: 10px; border-radius: 5px; overflow: hidden; }
-        .progress-ibre { height: 100%; background: linear-gradient(90deg, var(--freebsd-red), #e67e22); width: 0; transition: width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1); }
+        .progress-ibre { height: 100%; background: linear-gradient(90deg, var(--freebsd-red), #e67e22); width: 0; transition: width 1.2s cubic-bezier(0.1, 0.8, 0.2, 1); }
 
         /* ==========================================
            4. ARAMA VE PREMIUM TABLO
@@ -209,62 +203,65 @@
         .yaml-btn { background-color: transparent; border: 1px dashed var(--freebsd-red); color: var(--freebsd-red); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 5px; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
         .yaml-btn:hover { background-color: var(--freebsd-red); color: #FFFFFF; border-style: solid; }
 
-        /* ==========================================
-           5. 🚨 CANLI LOG AKIŞ PENCERESİ (Terminal CSS)
-           ========================================== */
-        .terminal-konsolu {
-            background-color: var(--terminal-bg);
-            border-radius: 8px;
-            padding: 16px;
-            font-family: 'Courier New', Courier, monospace;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
-            border: 1px solid var(--border-color);
-        }
-        .terminal-baslik {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 12px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid #22222a;
-        }
-        .terminal-butonlar {
-            display: flex;
-            gap: 6px;
-        }
-        .term-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-        }
+        /* Terminal CSS */
+        .terminal-konsolu { background-color: var(--terminal-bg); border-radius: 8px; padding: 16px; font-family: 'Courier New', Courier, monospace; box-shadow: inset 0 4px 12px rgba(0,0,0,0.5); border: 1px solid var(--border-color); }
+        .terminal-baslik { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid #22222a; }
+        .terminal-butonlar { display: flex; gap: 6px; }
+        .term-dot { width: 10px; height: 10px; border-radius: 50%; }
         .term-dot.red { background-color: #ff5f56; }
         .term-dot.yellow { background-color: #ffbd2e; }
         .term-dot.green { background-color: #27c93f; }
-        .terminal-etiket {
-            font-size: 11px;
-            color: #666677;
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 1px;
-        }
-        .terminal-satirlari {
-            height: 120px;
-            overflow-y: auto;
-            font-size: 12px;
-            color: var(--terminal-text);
-            line-height: 1.6;
-            scroll-behavior: smooth;
-        }
-        /* İnce kaydırma çubuğu ayarı */
+        .terminal-etiket { font-size: 11px; color: #666677; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
+        .terminal-satirlari { height: 120px; overflow-y: auto; font-size: 12px; color: var(--terminal-text); line-height: 1.6; scroll-behavior: smooth; }
         .terminal-satirlari::-webkit-scrollbar { width: 4px; }
         .terminal-satirlari::-webkit-scrollbar-thumb { background-color: #33333a; border-radius: 2px; }
+
+        /* ==========================================
+           5. 🚨 CANLI BİLDİRİM TEPE LAMBASI (Toast CSS)
+           ========================================== */
+        .toast-konteyner {
+            position: fixed;
+            top: 25px;
+            right: -350px; /* İlk başta dükkanın dışında saklı */
+            width: 320px;
+            background-color: #D54016; /* FreeBSD Alev Kırmızısı */
+            color: #FFFFFF;
+            padding: 16px 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(213, 64, 22, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 13.5px;
+            font-weight: 600;
+            z-index: 9999;
+            transition: right 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Yaylı amortisör efekti */
+        }
+        .toast-konteyner.aktif {
+            right: 25px; /* Tetiklenince tık diye içeri fırlar */
+        }
+        .toast-kapat {
+            margin-left: auto;
+            cursor: pointer;
+            opacity: 0.8;
+            font-size: 16px;
+        }
+        .toast-kapat:hover { opacity: 1; }
     </style>
 </head>
 <body>
 
+    <div class="toast-konteyner" id="hararetToast">
+        <span style="font-size: 20px;">🚨</span>
+        <div>
+            <div style="font-size: 11px; text-transform: uppercase; opacity: 0.9; letter-spacing: 0.5px;">Sistem Alarmı</div>
+            <div style="margin-top: 2px;">k3s kümesinde yüksek hararet! Çırakları uyarın</div>
+        </div>
+        <span class="toast-kapat" id="toastKapatBtn">&times;</span>
+    </div>
+
     <div class="hacoli-container">
         
-        <!-- Üst Kontrol İstasyonu -->
         <div class="kontrol-paneli">
             <div class="status-badge">
                 <div class="pulse-dot"></div>
@@ -273,12 +270,10 @@
             <button class="dark-mode-btn" id="toggleModeBtn">🌙 Gece Modu</button>
         </div>
         
-        <!-- Logo Alanı -->
         <div class="logo-alani">
-            <img src="freeBSD.png" alt="FreeBSD Logo">
+            <img src="freebSD.png" alt="FreeBSD Logo">
         </div>
 
-        <!-- Kubernetes Canlı Sayaç Kartları -->
         <div class="k8s-counter-grid">
             <div class="counter-card">
                 <div class="counter-icon">⚙️</div>
@@ -296,7 +291,6 @@
             </div>
         </div>
 
-        <!-- Anlık Hararet Panosu -->
         <div class="hararet-panosu">
             <h3>🔥 Sunucu Anlık Hararet Durumu</h3>
             <div class="bar-container">
@@ -309,10 +303,8 @@
             </div>
         </div>
 
-        <!-- Canlı Arama Kutusu -->
         <input type="text" id="tabloArama" class="arama-kutusu" placeholder="🔍 Tabloda işletim sistemi ara...">
 
-        <!-- Premium Tablo -->
         <table class="freebsd-table" id="isletimTablosu">
             <thead>
                 <tr>
@@ -341,7 +333,6 @@
             </tbody>
         </table>
 
-        <!-- 🚨 CANLI LOG AKIŞ PENCERESİ (Maddde 1) -->
         <div class="terminal-konsolu">
             <div class="terminal-baslik">
                 <div class="terminal-butonlar">
@@ -351,15 +342,16 @@
                 </div>
                 <div class="terminal-etiket">hacoli-k3s-engine.log</div>
             </div>
-            <div class="terminal-satirlari" id="termSatirlar">
-                <!-- Log satırları buraya tıkır tıkır akacak -->
-            </div>
+            <div class="terminal-satirlari" id="termSatirlar"></div>
         </div>
 
     </div>
 
-    <!-- JAVASCRIPT ENGINE -->
     <script>
+        // Global Hararet Değerleri (JS Motorunun Aklı)
+        let mevcutCPU = 42;
+        let mevcutRAM = 68;
+
         // 1. Gece/Gündüz Modu Şalteri
         const btn = document.getElementById('toggleModeBtn');
         btn.addEventListener('click', () => {
@@ -367,11 +359,17 @@
             btn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️ Gündüz Modu' : '🌙 Gece Modu';
         });
 
-        // 2. Hararet Göstergesi Animasyonu
+        // 2. Hararet Göstergelerini Güncelleyen Fonksiyon Amortisörü
+        function hararetCiz() {
+            document.getElementById('cpu-bar').style.width = mevcutCPU + '%';
+            document.getElementById('cpu-yuzde').innerHTML = mevcutCPU + '%';
+            document.getElementById('ram-bar').style.width = mevcutRAM + '%';
+            document.getElementById('ram-yuzde').innerHTML = mevcutRAM + '%';
+        }
+
+        // İlk açılış animasyonunu tetikliyoruz
         window.addEventListener('DOMContentLoaded', () => {
-            const cpuHedef = 42; const ramHedef = 68; 
-            setTimeout(() => { document.getElementById('cpu-bar').style.width = cpuHedef + '%'; document.getElementById('cpu-yuzde').innerHTML = cpuHedef + '%'; }, 300);
-            setTimeout(() => { document.getElementById('ram-bar').style.width = ramHedef + '%'; document.getElementById('ram-yuzde').innerHTML = ramHedef + '%'; }, 600);
+            setTimeout(hararetCiz, 300);
         });
 
         // 3. Canlı Arama Motoru
@@ -391,14 +389,14 @@
 
         // 4. YAML İndirme Fonksiyonu
         document.getElementById('indirYamlBtn').addEventListener('click', () => {
-            const yamlIcerik = `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: hacoli-web-deployment\nspec:\n  replicas: 2\n  template:\n    spec:\n      containers:\n      - name: nginx-core\n        image: hacoli-yerel:v5`;
+            const yamlIcerik = `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: hacoli-web-deployment\nspec:\n  replicas: 2`;
             const blob = new Blob([yamlIcerik], { type: 'text/yaml' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a'); a.href = url; a.download = 'hacoli-k3s-config.yaml';
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         });
 
-        // 5. 🚨 CANLI LOG AKIŞ MOTORU (Simülasyon)
+        // 5. Canlı Log Akış Motoru
         const logHavuzu = [
             "hacoli-web-pod-1 nginx: Core engine stabilized and listening on port 80.",
             "k3s-cluster: Replica count verified successfully: 2 pods active.",
@@ -407,31 +405,53 @@
             "hacoli-web-pod-1 internal-cron: Storage sync completed with zero friction.",
             "k3s-cluster: Health check passed. Status: 100% stable."
         ];
-
         const consoleBox = document.getElementById('termSatirlar');
 
         function logEkle(mesaj) {
-            // Şimdiki zaman damgası (2026 formatında)
             const simdi = new Date();
             const saatStr = simdi.toTimeString().split(' ')[0];
-            
-            // Yeni log satırı HTML'i
             const yeniSatir = `<div>[2026-07-07 ${saatStr}] > ${mesaj}</div>`;
             consoleBox.innerHTML += yeniSatir;
-            
-            // Otomatik en aşağı kaydırma cıvatası
             consoleBox.scrollTop = consoleBox.scrollHeight;
         }
 
-        // İlk açılışta 2 tane hazır log basalım dükkan boş kalmasın
         logEkle("k3s-engine: Initialize core system monitoring...");
         setTimeout(() => logEkle("hacoli-web: Deployment version v5 linked securely."), 1000);
 
-        // Her 4 saniyede bir havuzdan rastgele bir log satırı fırlatıyoruz
+        // Her 4 saniyede bir log akıtıyoruz + Hararet barlarını hafifçe oynatıyoruz
         setInterval(() => {
             const rastgeleMesaj = logHavuzu[Math.floor(Math.random() * logHavuzu.length)];
             logEkle(rastgeleMesaj);
+            
+            // Hararet kadranlarına hafif sanayi titreşimi veriyoruz (dinamik hissettirsin diye)
+            mevcutCPU = Math.floor(Math.random() * (75 - 35 + 1)) + 35; // %35 - %75 arası dalgalanma
+            mevcutRAM = Math.floor(Math.random() * (85 - 55 + 1)) + 55; // %55 - %85 arası dalgalanma
+            hararetCiz();
         }, 4000);
+
+        // ==========================================
+        // 6. 🚨 BİLDİRİM TEPE LAMBASI (Toast Engine)
+        // ==========================================
+        const toast = document.getElementById('hararetToast');
+        
+        // Manuel kapatma cıvatası
+        document.getElementById('toastKapatBtn').addEventListener('click', () => {
+            toast.classList.remove('aktif');
+        });
+
+        // Her 6 saniyede bir akıllı hararet taraması yapılıyor (Zar Atma Modeli)
+        setInterval(() => {
+            // Eğer o an dalgalanan hararetlerden biri %70 barajını aşarsa alarm fırlat!
+            if (mevcutCPU > 70 || mevcutRAM > 70) {
+                logEkle("🚨 [CRITICAL-WARN] > High temperature spike detected in node structure!");
+                toast.classList.add('aktif');
+                
+                // 4 saniye sonra tepe lambasını otomatik söndür
+                setTimeout(() => {
+                    toast.classList.remove('aktif');
+                }, 4000);
+            }
+        }, 6000);
     </script>
 
 </body>
