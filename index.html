@@ -1,102 +1,265 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8"> <title>Hacoli FreeBSD Container Tasarımı</title>
+    <meta charset="UTF-8"> <title>Hacoli Premium DevOps Dashboard</title>
     <style>
-        /* 1. SAYFA GENEL AYARLARI (Scroll barları kör etme ve ortalama) */
+        /* ==========================================
+           1. DEĞİŞKENLER VE TEMEL ŞASİ (Light Mode)
+           ========================================== */
+        :root {
+            --bg-color: #f4f5f7;
+            --container-bg: #FFFFFF;
+            --text-main: #333333;
+            --text-sub: #666666;
+            --border-color: #E0E0E0;
+            --row-even: #FAFAFA;
+            --row-hover: #F1F1F1;
+            --shadow-color: rgba(213, 64, 22, 0.15);
+            --card-bg: #F8F9FA;
+            
+            --freebsd-red: #D54016;
+            --linux-red: #E22B22;
+            --dark-charcoal: #1A1A1A;
+        }
+
+        /* 🚨 GECE MODU AKTİFKEN DEVREYE GİRECEK CİVATALAR */
+        body.dark-mode {
+            --bg-color: #0F0F12;
+            --container-bg: #16161A;
+            --text-main: #EAEAEA;
+            --text-sub: #B0B0B5;
+            --border-color: #2A2A32;
+            --row-even: #1C1C22;
+            --row-hover: #25252E;
+            --shadow-color: rgba(0, 0, 0, 0.5);
+            --card-bg: #1F1F26;
+        }
+
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            background-color: #f4f5f7; /* Arkadaki hafif sanayi grisi */
+            background-color: var(--bg-color);
             display: flex;
             justify-content: center;
             align-items: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s ease;
         }
 
-        /* 2. ANA CONTAINER (Logo ve Tabloyu Kapsayan Çelik Zırh) */
-        .general-container {
-            background-color: #FFFFFF; /* Kutunun içi saf beyaz */
+        /* ==========================================
+           2. ANA CONTAINER VE ŞALTER PANELİ
+           ========================================== */
+        .hacoli-container {
+            background-color: var(--container-bg);
             width: 100%;
-            max-width: 850px;         /* Kutunun ekrandaki ideal genişlik sınırı */
-            padding: 30px;            /* İçerideki elemanlar kenara yapışmasın diye boşluk */
-            border-radius: 12px;      /* Köşeleri nizamî yuvarlama cıvatası */
-            
-            /* 🚨 İŞTE İSTEDİĞİN GÖLGE AYARI BURASI! */
-            /* Mantık: sağa-gölge aşağı-gölge yayılma-miktarı büyüme-miktarı RGBA(R, G, B, Opaklık) */
-            box-shadow: 0 10px 30px 0 rgba(213, 64, 22, 0.15); 
-            
-            /* Üstteki gölgede FreeBSD'nin kor kırmızısını (213, 64, 22) %15 opaklıkla verdik.
-               Eğer düz koyu gri bir gölge istersen şunu açabilirsin:
-               box-shadow: 0 10px 30px 0 rgba(0, 0, 0, 0.1); */
-               
-            transition: all 0.3s ease; /* Fareyle üstüne gelince gölge oynasın diye amortisör */
+            max-width: 850px;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 12px 40px 0 var(--shadow-color);
+            position: relative;
+            transition: all 0.3s ease;
         }
 
-        /* Fareyle kutunun üstüne gelince (Hover) gölgeyi daha da canlandırma cıvatası */
-        .general-container:hover {
-            box-shadow: 0 15px 40px 0 rgba(213, 64, 22, 0.25);
-            transform: translateY(-2px); /* Kutuyu hafif yukarı kaldırır */
+        /* Sağ Üst Kontrol İstasyonu */
+        .kontrol-paneli {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
-        /* 3. LOGO (PNG) AYARLARI */
+        /* 🌙 Gece Modu Butonu */
+        .dark-mode-btn {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .dark-mode-btn:hover {
+            border-color: var(--freebsd-red);
+            transform: scale(1.05);
+        }
+
+        /* 🟢 Canlı Sistem Lambası (Pulse Efektli) */
+        .status-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-main);
+            background-color: var(--card-bg);
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+        }
+        .pulse-dot {
+            width: 10px;
+            height: 10px;
+            background-color: #2ecc71;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+            animation: pulse-amortisor 1.6s infinite;
+        }
+        @keyframes pulse-amortisor {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(46, 204, 113, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+
+        /* ==========================================
+           3. LOGO VE SAYAÇ KARTLARI (Kubernetes)
+           ========================================== */
         .logo-alani {
             display: flex;
-            justify-content: center;   /* Logoyu kendi alanı içinde ortala */
-            margin-bottom: 25px;       /* Alttaki tabloya çok yanaşmasın diye mesafe */
+            justify-content: center;
+            margin-bottom: 25px;
+            margin-top: 15px;
         }
         .logo-alani img {
-            max-width: 100%;          /* Logonun devasa olmasını önleyen takoz */
+            width: 350px;
+            max-width: 100%;
             height: auto;
+            filter: drop-shadow(0 4px 10px rgba(0,0,0,0.08));
         }
 
-        /* 4. ASİL FREEBSD TABLO CSS'LERİ */
+        /* Kubernetes Sayaç Panosu */
+        .k8s-counter-grid {
+            display: grid;
+            grid-template-columns: 14fr 1fr; /* Flex yerine yan yana iki oda */
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        @media (min-width: 500px) {
+            .k8s-counter-grid { grid-template-columns: 1fr 1fr; }
+        }
+        .counter-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 14px 18px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s ease;
+        }
+        .counter-card:hover {
+            border-color: var(--freebsd-red);
+        }
+        .counter-icon { font-size: 22px; }
+        .counter-info h4 { margin: 0; font-size: 11px; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px; }
+        .counter-info p { margin: 2px 0 0 0; font-size: 15px; font-weight: bold; color: var(--text-main); }
+
+        /* ==========================================
+           4. PREMIUM HOVER TABLO SİSTEMİ
+           ========================================== */
         .freebsd-table {
             width: 100%;
             border-collapse: collapse;
-            border-radius: 6px;
+            border-radius: 8px;
             overflow: hidden;
         }
         .freebsd-table th {
-            background-color: #1A1A1A;
+            background-color: var(--dark-charcoal);
             color: #FFFFFF;
             text-align: left;
             padding: 14px 16px;
             font-size: 15px;
-            border-bottom: 3px solid #D54016;
+            border-bottom: 3px solid var(--freebsd-red);
         }
         .freebsd-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #E0E0E0;
-            color: #333333;
+            padding: 14px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
             font-size: 14px;
+            position: relative;
+            transition: all 0.2s ease;
         }
-        .freebsd-table tr:nth-child(even) {
-            background-color: #FAFAFA;
+        .freebsd-table tr:nth-child(even) td {
+            background-color: var(--row-even);
         }
-        .linux-text { color: #E22B22; font-weight: bold; }
-        .freebsd-text { color: #D54016; font-weight: bold; }
+
+        /* 🚨 PREMIUM HOVER: Satır Şahlanma Efekti */
+        .freebsd-table tbody tr {
+            transition: all 0.2s ease;
+        }
+        .freebsd-table tbody tr:hover td {
+            background-color: var(--row-hover);
+            transform: translateX(6px); /* Yazıları hafif sağa esnetir */
+            color: var(--text-main);
+        }
+        /* Satırın solundan çıkan kırmızı çelik gizli takoz */
+        .freebsd-table tbody tr td:first-child::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 0;
+            background-color: var(--freebsd-red);
+            transition: width 0.2s ease;
+        }
+        .freebsd-table tbody tr:hover td:first-child::before {
+            width: 4px; /* Fare gelince 4px kırmızı şerit belirir */
+        }
+
+        /* Metin Renkleri ve Linkler */
+        .linux-text { color: var(--linux-red); font-weight: bold; }
+        .freebsd-text { color: var(--freebsd-red); font-weight: bold; }
+        
         .freebsd-table a {
-            color: #D54016;
+            color: var(--freebsd-red);
             text-decoration: none;
             font-weight: 600;
-            border-bottom: 1px dashed #D54016;
+            border-bottom: 1px dashed var(--freebsd-red);
+            transition: all 0.2s ease;
         }
-        .tablo-ortali-metin {
-            text-align: center; /* Yatayda metni tam ortalar */
-            color: #1A1A1A;     /* FreeBSD antrasiti */
-            border-bottom: none !important; 
+        .freebsd-table a:hover {
+            color: var(--text-main);
+            border-bottom: 1px solid var(--text-main);
         }
     </style>
 </head>
 <body>
 
-    <div class="general-container">
+    <div class="hacoli-container">
+        
+        <div class="kontrol-paneli">
+            <div class="status-badge">
+                <div class="pulse-dot"></div>
+                <span>Live</span>
+            </div>
+            <button class="dark-mode-btn" id="toggleModeBtn">🌙 Gece Modu</button>
+        </div>
         
         <div class="logo-alani">
             <img src="freeBSD.png" alt="FreeBSD Logo">
+        </div>
+
+        <div class="k8s-counter-grid">
+            <div class="counter-card">
+                <div class="counter-icon">⚙️</div>
+                <div class="counter-info">
+                    <h4>Aktif Cluster Mimarisi</h4>
+                    <p>k3s / FreeBSD Core</p>
+                </div>
+            </div>
+            <div class="counter-card">
+                <div class="counter-icon">🐳</div>
+                <div class="counter-info">
+                    <h4>Çalışan Motor (Replica)</h4>
+                    <p>2 / 2 Pod Active</p>
+                </div>
+            </div>
         </div>
 
         <table class="freebsd-table">
@@ -119,12 +282,30 @@
                     <td><a href="https://www.freebsd.org" target="_blank">freebsd.org</a></td>
                 </tr>
                 <tr>
-                    <td class="tablo-ortali-metin" colspan="3">createand</td>
+                    <td colspan="3" style="text-align: center; border-bottom: none; font-weight: bold; color: var(--freebsd-red); padding: 18px 16px;">
+                        ⚙️ Hacoli DevOps Altyapısı K3s Üzerinde Kararlılıkla Çalışıyor
+                    </td>
                 </tr>
             </tbody>
         </table>
 
     </div>
+
+    <script>
+        const btn = document.getElementById('toggleModeBtn');
+        
+        btn.addEventListener('click', () => {
+            // Body'ye dark-mode sınıfını ekle/çıkar yapıyoruz
+            document.body.classList.toggle('dark-mode');
+            
+            // Butonun üstündeki yazıyı duruma göre güncelliyoruz
+            if (document.body.classList.contains('dark-mode')) {
+                btn.innerHTML = '☀️ Gündüz Modu';
+            } else {
+                btn.innerHTML = '🌙 Gece Modu';
+            }
+        });
+    </script>
 
 </body>
 </html>
