@@ -2,7 +2,7 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8"> <!-- Türkçe karakter sente ayarı -->
-    <title>Hacoli Cyber DevOps Dashboard v2</title>
+    <title>Hacoli Cyber DevOps Dashboard v3</title>
     <style>
         /* ==========================================
            1. DEĞİŞKENLER VE TEMEL ŞASİ (Light Mode)
@@ -24,6 +24,10 @@
             
             /* SİBER NOKTA DESENİ */
             --grid-pattern: radial-gradient(rgba(0, 0, 0, 0.05) 1px, transparent 1px);
+            
+            /* TERMINAL RENKLERİ */
+            --terminal-bg: #111115;
+            --terminal-text: #38ef7d;
         }
 
         /* GECE MODU AKTİFKEN DEVREYE GİRECEK CİVATALAR */
@@ -38,6 +42,8 @@
             --shadow-color: rgba(0, 0, 0, 0.5);
             --card-bg: #1F1F26;
             --grid-pattern: radial-gradient(rgba(213, 64, 22, 0.07) 1px, transparent 1px);
+            
+            --terminal-bg: #0A0A0D;
         }
 
         html, body {
@@ -121,7 +127,7 @@
         }
 
         /* ==========================================
-           3. LOGO, SAYAÇLAR VE HARARET (Progress Bar)
+           3. LOGO, SAYAÇLAR VE HARARET PANOSU
            ========================================== */
         .logo-alani {
             display: flex;
@@ -136,7 +142,6 @@
             filter: drop-shadow(0 4px 10px rgba(0,0,0,0.08));
         }
 
-        /* Kubernetes Sayaç Panosu */
         .k8s-counter-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -161,7 +166,6 @@
         .counter-info h4 { margin: 0; font-size: 11px; text-transform: uppercase; color: var(--text-sub); letter-spacing: 0.5px; }
         .counter-info p { margin: 2px 0 0 0; font-size: 15px; font-weight: bold; color: var(--text-main); }
 
-        /* 📊 ANLIK HARARET PANOSU (Progress Bar CSS) */
         .hararet-panosu {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -175,122 +179,85 @@
             text-transform: uppercase;
             color: var(--text-sub);
             letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
-        .bar-container {
-            margin-bottom: 12px;
-        }
-        .bar-container:last-child { margin-bottom: 0; }
-        .bar-etiket {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text-main);
-            margin-bottom: 6px;
-        }
-        .progress-rayi {
-            background-color: var(--border-color);
-            height: 10px;
-            border-radius: 5px;
-            overflow: hidden;
-            position: relative;
-        }
-        .progress-ibre {
-            height: 100%;
-            background: linear-gradient(90deg, var(--freebsd-red), #e67e22);
-            border-radius: 5px;
-            width: 0; /* JS ile dolduracağız */
-            transition: width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1);
-        }
+        .bar-container { margin-bottom: 12px; }
+        .bar-etiket { display: flex; justify-content: space-between; font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
+        .progress-rayi { background-color: var(--border-color); height: 10px; border-radius: 5px; overflow: hidden; }
+        .progress-ibre { height: 100%; background: linear-gradient(90deg, var(--freebsd-red), #e67e22); width: 0; transition: width 1.5s cubic-bezier(0.1, 0.8, 0.2, 1); }
 
         /* ==========================================
-           4. ARAMA MOTORU VE PREMIUM HOVER TABLO
+           4. ARAMA VE PREMIUM TABLO
            ========================================== */
         .arama-kutusu {
-            width: 100%;
-            padding: 12px 16px;
-            box-sizing: border-box;
-            border: 1px solid var(--border-color);
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border-radius: 8px;
-            font-size: 14px;
-            margin-bottom: 20px;
-            outline: none;
-            transition: all 0.2s ease;
+            width: 100%; padding: 12px 16px; box-sizing: border-box; border: 1px solid var(--border-color); background-color: var(--card-bg); color: var(--text-main); border-radius: 8px; font-size: 14px; margin-bottom: 20px; outline: none; transition: all 0.2s ease;
         }
-        .arama-kutusu:focus {
-            border-color: var(--freebsd-red);
-            box-shadow: 0 0 0 3px rgba(213, 64, 22, 0.15);
-        }
+        .arama-kutusu:focus { border-color: var(--freebsd-red); box-shadow: 0 0 0 3px rgba(213, 64, 22, 0.15); }
 
-        .freebsd-table {
-            width: 100%;
-            border-collapse: collapse;
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        .freebsd-table th {
-            background-color: var(--dark-charcoal);
-            color: #FFFFFF;
-            text-align: left;
-            padding: 14px 16px;
-            font-size: 15px;
-            border-bottom: 3px solid var(--freebsd-red);
-        }
-        .freebsd-table td {
-            padding: 14px 16px;
-            border-bottom: 1px solid var(--border-color);
-            color: var(--text-main);
-            font-size: 14px;
-            position: relative;
-            transition: all 0.2s ease;
-        }
+        .freebsd-table { width: 100%; border-collapse: collapse; border-radius: 8px; overflow: hidden; margin-bottom: 25px; }
+        .freebsd-table th { background-color: var(--dark-charcoal); color: #FFFFFF; text-align: left; padding: 14px 16px; font-size: 15px; border-bottom: 3px solid var(--freebsd-red); }
+        .freebsd-table td { padding: 14px 16px; border-bottom: 1px solid var(--border-color); color: var(--text-main); font-size: 14px; position: relative; transition: all 0.2s ease; }
         .freebsd-table tr:nth-child(even) td { background-color: var(--row-even); }
-
         .freebsd-table tbody tr { transition: all 0.2s ease; }
-        .freebsd-table tbody tr:hover td {
-            background-color: var(--row-hover);
-            transform: translateX(6px);
-        }
-        .freebsd-table tbody tr td:first-child::before {
-            content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 0;
-            background-color: var(--freebsd-red); transition: width 0.2s ease;
-        }
+        .freebsd-table tbody tr:hover td { background-color: var(--row-hover); transform: translateX(6px); }
+        .freebsd-table tbody tr td:first-child::before { content: ""; position: absolute; left: 0; top: 0; height: 100%; width: 0; background-color: var(--freebsd-red); transition: width 0.2s ease; }
         .freebsd-table tbody tr:hover td:first-child::before { width: 4px; }
 
         .linux-text { color: var(--linux-red); font-weight: bold; }
         .freebsd-text { color: var(--freebsd-red); font-weight: bold; }
-        
-        .freebsd-table a {
-            color: var(--freebsd-red); text-decoration: none; font-weight: 600;
-            border-bottom: 1px dashed var(--freebsd-red); transition: all 0.2s ease;
-        }
+        .freebsd-table a { color: var(--freebsd-red); text-decoration: none; font-weight: 600; border-bottom: 1px dashed var(--freebsd-red); transition: all 0.2s ease; }
         .freebsd-table a:hover { color: var(--text-main); border-bottom: 1px solid var(--text-main); }
+        .yaml-btn { background-color: transparent; border: 1px dashed var(--freebsd-red); color: var(--freebsd-red); padding: 6px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; margin-top: 5px; display: inline-flex; align-items: center; gap: 6px; transition: all 0.2s ease; }
+        .yaml-btn:hover { background-color: var(--freebsd-red); color: #FFFFFF; border-style: solid; }
 
-        /* YAML İndirme Butonu CSS'i */
-        .yaml-btn {
-            background-color: transparent;
-            border: 1px dashed var(--freebsd-red);
-            color: var(--freebsd-red);
-            padding: 6px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: 600;
-            margin-top: 5px;
-            display: inline-flex;
+        /* ==========================================
+           5. 🚨 CANLI LOG AKIŞ PENCERESİ (Terminal CSS)
+           ========================================== */
+        .terminal-konsolu {
+            background-color: var(--terminal-bg);
+            border-radius: 8px;
+            padding: 16px;
+            font-family: 'Courier New', Courier, monospace;
+            box-shadow: inset 0 4px 12px rgba(0,0,0,0.5);
+            border: 1px solid var(--border-color);
+        }
+        .terminal-baslik {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #22222a;
+        }
+        .terminal-butonlar {
+            display: flex;
             gap: 6px;
-            transition: all 0.2s ease;
         }
-        .yaml-btn:hover {
-            background-color: var(--freebsd-red);
-            color: #FFFFFF;
-            border-style: solid;
+        .term-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
         }
+        .term-dot.red { background-color: #ff5f56; }
+        .term-dot.yellow { background-color: #ffbd2e; }
+        .term-dot.green { background-color: #27c93f; }
+        .terminal-etiket {
+            font-size: 11px;
+            color: #666677;
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .terminal-satirlari {
+            height: 120px;
+            overflow-y: auto;
+            font-size: 12px;
+            color: var(--terminal-text);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+        /* İnce kaydırma çubuğu ayarı */
+        .terminal-satirlari::-webkit-scrollbar { width: 4px; }
+        .terminal-satirlari::-webkit-scrollbar-thumb { background-color: #33333a; border-radius: 2px; }
     </style>
 </head>
 <body>
@@ -329,35 +296,21 @@
             </div>
         </div>
 
-        <!-- 📊 ANLIK HARARET PANOSU (Progress Bar Odası) -->
+        <!-- Anlık Hararet Panosu -->
         <div class="hararet-panosu">
             <h3>🔥 Sunucu Anlık Hararet Durumu</h3>
-            
-            <!-- CPU Bar -->
             <div class="bar-container">
-                <div class="bar-etiket">
-                    <span>CPU Yükü (Core)</span>
-                    <span id="cpu-yuzde">0%</span>
-                </div>
-                <div class="progress-rayi">
-                    <div class="progress-ibre" id="cpu-bar"></div>
-                </div>
+                <div class="bar-etiket"><span>CPU Yükü (Core)</span><span id="cpu-yuzde">0%</span></div>
+                <div class="progress-rayi"><div class="progress-ibre" id="cpu-bar"></div></div>
             </div>
-
-            <!-- RAM Bar -->
             <div class="bar-container">
-                <div class="bar-etiket">
-                    <span>RAM Bellek Tüketimi</span>
-                    <span id="ram-yuzde">0%</span>
-                </div>
-                <div class="progress-rayi">
-                    <div class="progress-ibre" id="ram-bar"></div>
-                </div>
+                <div class="bar-etiket"><span>RAM Bellek Tüketimi</span><span id="ram-yuzde">0%</span></div>
+                <div class="progress-rayi"><div class="progress-ibre" id="ram-bar"></div></div>
             </div>
         </div>
 
         <!-- Canlı Arama Kutusu -->
-        <input type="text" id="tabloArama" class="arama-kutusu" placeholder="🔍 Tabloda işletim sistemi ara (Örn: Linux, FreeBSD)...">
+        <input type="text" id="tabloArama" class="arama-kutusu" placeholder="🔍 Tabloda işletim sistemi ara...">
 
         <!-- Premium Tablo -->
         <table class="freebsd-table" id="isletimTablosu">
@@ -379,7 +332,6 @@
                     <td>FreeBSD Güçlü Dağıtım ve Core Sistem Kapısı</td>
                     <td><a href="https://www.freebsd.org" target="_blank">freebsd.org</a></td>
                 </tr>
-                <!-- Son Özel Satır (YAML İndirme Butonlu) -->
                 <tr id="ozelSatir">
                     <td colspan="3" style="text-align: center; border-bottom: none; font-weight: bold; padding: 18px 16px;">
                         <div style="color: var(--freebsd-red); margin-bottom: 8px;">⚙️ Hacoli Altyapısı K3s Üzerinde Kararlılıkla Çalışıyor</div>
@@ -389,9 +341,24 @@
             </tbody>
         </table>
 
+        <!-- 🚨 CANLI LOG AKIŞ PENCERESİ (Maddde 1) -->
+        <div class="terminal-konsolu">
+            <div class="terminal-baslik">
+                <div class="terminal-butonlar">
+                    <div class="term-dot red"></div>
+                    <div class="term-dot yellow"></div>
+                    <div class="term-dot green"></div>
+                </div>
+                <div class="terminal-etiket">hacoli-k3s-engine.log</div>
+            </div>
+            <div class="terminal-satirlari" id="termSatirlar">
+                <!-- Log satırları buraya tıkır tıkır akacak -->
+            </div>
+        </div>
+
     </div>
 
-    <!-- JAVASCRIPT MOTORU -->
+    <!-- JAVASCRIPT ENGINE -->
     <script>
         // 1. Gece/Gündüz Modu Şalteri
         const btn = document.getElementById('toggleModeBtn');
@@ -400,94 +367,71 @@
             btn.innerHTML = document.body.classList.contains('dark-mode') ? '☀️ Gündüz Modu' : '🌙 Gece Modu';
         });
 
-        // 2. 📊 HARARET GÖSTERGESİ ANİMASYON MOTORU
+        // 2. Hararet Göstergesi Animasyonu
         window.addEventListener('DOMContentLoaded', () => {
-            // Sunucu anlık hararet değerleri (Sanayi ortalaması)
-            const cpuHedef = 42; 
-            const ramHedef = 68; 
-
-            // CPU İbresini İtliyoruz
-            setTimeout(() => {
-                document.getElementById('cpu-bar').style.width = cpuHedef + '%';
-                document.getElementById('cpu-yuzde').innerHTML = cpuHedef + '%';
-            }, 300);
-
-            // RAM İbresini İtliyoruz
-            setTimeout(() => {
-                document.getElementById('ram-bar').style.width = ramHedef + '%';
-                document.getElementById('ram-yuzde').innerHTML = ramHedef + '%';
-            }, 600);
+            const cpuHedef = 42; const ramHedef = 68; 
+            setTimeout(() => { document.getElementById('cpu-bar').style.width = cpuHedef + '%'; document.getElementById('cpu-yuzde').innerHTML = cpuHedef + '%'; }, 300);
+            setTimeout(() => { document.getElementById('ram-bar').style.width = ramHedef + '%'; document.getElementById('ram-yuzde').innerHTML = ramHedef + '%'; }, 600);
         });
 
-        // 3. Canlı Arama ve Filtreleme Motoru
+        // 3. Canlı Arama Motoru
         const aramaGirdisi = document.getElementById('tabloArama');
         aramaGirdisi.addEventListener('keyup', () => {
             const filtre = aramaGirdisi.value.toUpperCase();
-            const tablo = document.getElementById('isletimTablosu');
-            const satirlar = tablo.getElementsByTagName('tbody')[0].getElementsByTagName('tr');
-
+            const satirlar = document.getElementById('isletimTablosu').getElementsByTagName('tbody')[0].getElementsByTagName('tr');
             for (let i = 0; i < satirlar.length; i++) {
-                // En alttaki özel buton satırını filtrenin dışında tutuyoruz
                 if (satirlar[i].id === 'ozelSatir') continue;
-
                 const td = satirlar[i].getElementsByTagName('td')[0];
                 if (td) {
                     const metinDegeri = td.textContent || td.innerText;
-                    if (metinDegeri.toUpperCase().indexOf(filtre) > -1) {
-                        satirlar[i].style.display = "";
-                    } else {
-                        satirlar[i].style.display = "none";
-                    }
+                    satirlar[i].style.display = metinDegeri.toUpperCase().indexOf(filtre) > -1 ? "" : "none";
                 }
             }
         });
 
-        // 4. Tek Tıkla YAML Raporu İndirme Fonksiyonu
+        // 4. YAML İndirme Fonksiyonu
         document.getElementById('indirYamlBtn').addEventListener('click', () => {
-            const yamlIcerik = `apiVersion: apps/v1
-            kind: Deployment
-            metadata:
-              name: hacoli-web
-            spec:
-              replicas: 2 # Tek sunucuda bile olsak 2 yedekli çalışsın, biri çökerse öbürü kurtarsın
-              selector:
-                matchLabels:
-                  app: web
-              template:
-                metadata:
-                  labels:
-                    app: web
-                spec:
-                  containers:
-                  - name: nginx
-                    image: hacoli-yerel:v5
-                    ports:
-                    - containerPort: 80
-                    imagePullPolicy: Never
-            ---
-            apiVersion: v1
-            kind: Service
-            metadata:
-              name: hacoli-web-servis
-            spec:
-              type: NodePort
-              selector:
-                app: web
-              ports:
-                - port: 80
-                  targetPort: 80
-                  nodePort: 30080 # 🏎️ VPS'inin dışarı açılan kapısı (Portu)`;
-
+            const yamlIcerik = `apiVersion: apps/v1\nkind: Deployment\nmetadata:\n  name: hacoli-web-deployment\nspec:\n  replicas: 2\n  template:\n    spec:\n      containers:\n      - name: nginx-core\n        image: hacoli-yerel:v5`;
             const blob = new Blob([yamlIcerik], { type: 'text/yaml' });
             const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'hacoli-k3s-config.yaml';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            const a = document.createElement('a'); a.href = url; a.download = 'hacoli-k3s-config.yaml';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
         });
+
+        // 5. 🚨 CANLI LOG AKIŞ MOTORU (Simülasyon)
+        const logHavuzu = [
+            "hacoli-web-pod-1 nginx: Core engine stabilized and listening on port 80.",
+            "k3s-cluster: Replica count verified successfully: 2 pods active.",
+            "hacoli-web-pod-2 nginx: Routing table synchronized with control plane.",
+            "k3s-kube-scheduler: All workloads balanced across node architecture.",
+            "hacoli-web-pod-1 internal-cron: Storage sync completed with zero friction.",
+            "k3s-cluster: Health check passed. Status: 100% stable."
+        ];
+
+        const consoleBox = document.getElementById('termSatirlar');
+
+        function logEkle(mesaj) {
+            // Şimdiki zaman damgası (2026 formatında)
+            const simdi = new Date();
+            const saatStr = simdi.toTimeString().split(' ')[0];
+            
+            // Yeni log satırı HTML'i
+            const yeniSatir = `<div>[2026-07-07 ${saatStr}] > ${mesaj}</div>`;
+            consoleBox.innerHTML += yeniSatir;
+            
+            // Otomatik en aşağı kaydırma cıvatası
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+        }
+
+        // İlk açılışta 2 tane hazır log basalım dükkan boş kalmasın
+        logEkle("k3s-engine: Initialize core system monitoring...");
+        setTimeout(() => logEkle("hacoli-web: Deployment version v5 linked securely."), 1000);
+
+        // Her 4 saniyede bir havuzdan rastgele bir log satırı fırlatıyoruz
+        setInterval(() => {
+            const rastgeleMesaj = logHavuzu[Math.floor(Math.random() * logHavuzu.length)];
+            logEkle(rastgeleMesaj);
+        }, 4000);
     </script>
 
 </body>
